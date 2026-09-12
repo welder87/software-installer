@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/url"
 	"testing"
 )
@@ -41,6 +42,45 @@ func TestNewURLBuilder_PositiveCases(t *testing.T) {
 				t.Errorf("NewURLBuilder(%q) error = %v", tt.origin, err)
 			} else {
 				assertURLsEqual(t, ans.urlTemplate, tt.template)
+			}
+		})
+	}
+}
+
+func TestNewURLBuilder_NegativeCases(t *testing.T) {
+	tests := []struct {
+		name   string
+		origin string
+		err    error
+	}{
+		{
+			"with_path",
+			"http://example.com/my-path",
+			ErrOriginContainsPath,
+		},
+		{
+			"with_query",
+			"https://example.com?a=1&b=2",
+			ErrOriginContainsQuery,
+		},
+		{
+			"valid_fragment",
+			"https://example.com?#myfrag",
+			ErrOriginContainsFragment,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ans, err := NewURLBuilder(tt.origin)
+			if !errors.Is(err, tt.err) {
+				t.Errorf("NewURLBuilder(%q) expected error", tt.origin)
+				return
+			}
+			if ans != nil {
+				t.Errorf("NewURLBuilder(%q) expected empty instance", tt.origin)
+				return
 			}
 		})
 	}

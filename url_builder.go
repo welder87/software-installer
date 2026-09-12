@@ -1,8 +1,15 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
+)
+
+var (
+	ErrOriginContainsPath     = errors.New("origin must not contain a path")
+	ErrOriginContainsQuery    = errors.New("origin must not contain a query")
+	ErrOriginContainsFragment = errors.New("origin must not contain a fragment")
 )
 
 type URLBuilder struct {
@@ -12,16 +19,20 @@ type URLBuilder struct {
 func NewURLBuilder(origin string) (*URLBuilder, error) {
 	item, err := url.Parse(origin)
 	if err != nil {
-		return nil, fmt.Errorf("invalid origin %w", err)
+		return nil, fmt.Errorf("invalid origin: %s. %w", origin, err)
 	}
 	if item.Path != "" && item.Path != "/" {
-		return nil, fmt.Errorf("origin must not contain a path: %s", item.Path)
+		return nil, fmt.Errorf("invalid origin: %s. %w", origin, ErrOriginContainsPath)
 	}
 	if item.RawQuery != "" {
-		return nil, fmt.Errorf("origin must not contain a query: %s", item.RawQuery)
+		return nil, fmt.Errorf("invalid origin: %s. %w", origin, ErrOriginContainsQuery)
 	}
 	if item.Fragment != "" {
-		return nil, fmt.Errorf("origin must not contain a fragment: %s", item.Fragment)
+		return nil, fmt.Errorf(
+			"invalid origin: %s. %w",
+			origin,
+			ErrOriginContainsFragment,
+		)
 	}
 
 	item.Path = ""
