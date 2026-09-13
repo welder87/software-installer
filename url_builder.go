@@ -10,6 +10,7 @@ var (
 	ErrOriginContainsPath     = errors.New("origin must not contain a path")
 	ErrOriginContainsQuery    = errors.New("origin must not contain a query")
 	ErrOriginContainsFragment = errors.New("origin must not contain a fragment")
+	ErrEmptyPath              = errors.New("path parts must not be empty")
 )
 
 type URLBuilder struct {
@@ -42,10 +43,17 @@ func NewURLBuilder(origin string) (*URLBuilder, error) {
 	}, nil
 }
 
-func (ub *URLBuilder) Build(item ...string) *url.URL {
-	return ub.urlTemplate.JoinPath(item...)
+func (ub *URLBuilder) Build(item ...string) (*url.URL, error) {
+	if len(item) == 0 {
+		return nil, ErrEmptyPath
+	}
+	return ub.urlTemplate.JoinPath(item...), nil
 }
 
-func (ub *URLBuilder) AsString(item ...string) string {
-	return ub.Build(item...).String()
+func (ub *URLBuilder) AsString(item ...string) (string, error) {
+	res, err := ub.Build(item...)
+	if err != nil {
+		return "", err
+	}
+	return res.String(), nil
 }
