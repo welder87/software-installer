@@ -26,8 +26,11 @@ func main() {
 	}
 	httpDownloader := NewHTTPDownLoader(httpClient)
 	softData := [][]string{
-		{"zellij-org", "zellij"},
-		{"charmbracelet", "glow"},
+		{
+			"DeusData",
+			"codebase-memory-mcp",
+			"codebase-memory-mcp-ui-linux-amd64.tar.gz",
+		},
 	}
 	for _, items := range softData {
 		urlBuilder, err := NewURLBuilder("https://api.github.com")
@@ -56,11 +59,16 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		nres, err := extractLatestTag(res)
+		nres, err := extractLatestReleaseInfo(res)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		fmt.Println(nres)
+		prog, err := findProgram(nres, items[2])
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		fmt.Println(prog)
 	}
 }
