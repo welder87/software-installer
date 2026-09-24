@@ -7,6 +7,13 @@ import (
 	"strings"
 )
 
+type SoftwareDescription struct {
+	Maitainer     string
+	Project       string
+	FileName      string
+	LocalFilePath string
+}
+
 func extractLatestReleaseInfo(lines []byte) (LatestReleaseInfo, error) {
 	var release LatestReleaseInfo
 	err := json.Unmarshal(lines, &release)
@@ -17,7 +24,7 @@ func extractLatestReleaseInfo(lines []byte) (LatestReleaseInfo, error) {
 }
 
 type LatestReleaseInfo struct {
-	TagName TrimmedString         `json:"tag_name"`
+	TagName TrimmedString        `json:"tag_name"`
 	Assets  []LatestReleaseAsset `json:"assets"`
 }
 

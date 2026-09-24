@@ -25,11 +25,12 @@ func main() {
 		Timeout:   30 * time.Second,
 	}
 	httpDownloader := NewHTTPDownLoader(httpClient)
-	softData := [][]string{
+	softData := []SoftwareDescription{
 		{
 			"DeusData",
 			"codebase-memory-mcp",
 			"codebase-memory-mcp-ui-linux-amd64.tar.gz",
+			".local/bin/codebase-memory-mcp",
 		},
 	}
 	for _, items := range softData {
@@ -40,8 +41,8 @@ func main() {
 		}
 		latestReleaseURL, err := urlBuilder.AsString(
 			"repos",
-			items[0],
-			items[1],
+			items.Maitainer,
+			items.Project,
 			"releases",
 			"latest",
 		)
@@ -64,11 +65,16 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		prog, err := findProgram(nres, items[2])
+		prog, err := findProgram(nres, items.FileName)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
 		fmt.Println(prog)
+		localFilePath, err := makeFilePath(items.LocalFilePath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(localFilePath)
 	}
 }
