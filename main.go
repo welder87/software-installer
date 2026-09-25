@@ -71,10 +71,21 @@ func main() {
 			continue
 		}
 		fmt.Println(prog)
+		fh, err := prog.FileHash()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 		localFilePath, err := makeFilePath(items.LocalFilePath)
 		if err != nil {
 			fmt.Println(err)
 		}
 		fmt.Println(localFilePath)
+		h, err := calculateHash(localFilePath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(fh)
+		fmt.Println(h)
 	}
 }

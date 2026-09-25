@@ -36,6 +36,14 @@ type LatestReleaseAsset struct {
 	BrowserDownloadURL MarshalableURL `json:"browser_download_url"`
 }
 
+func (lra LatestReleaseAsset) FileHash() (string, error) {
+	res := strings.Split(string(lra.Digest), ":")
+	if len(res) != 2 {
+		return "", fmt.Errorf("invalid digest %s", lra.Digest)
+	}
+	return res[1], nil
+}
+
 type MarshalableURL struct {
 	*url.URL
 }
