@@ -87,5 +87,12 @@ func main() {
 		}
 		fmt.Println(fh)
 		fmt.Println(h)
+		file_as_bytes, err := httpDownloader.Download(prog.BrowserDownloadURL.String())
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		h2 := calcHash(file_as_bytes)
+		fmt.Println(h2)
 	}
 }

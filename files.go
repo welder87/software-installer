@@ -57,3 +57,8 @@ func calculateHash(path string) (string, error) {
 	}
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
+
+func calcHash(data []byte) string {
+	sm := sha256.Sum256(data)
+	return hex.EncodeToString(sm[:])
+}
